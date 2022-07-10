@@ -75,7 +75,7 @@ Token Lexer::string_token()
 	//we have reached end of input because we didnt encounter closing quotes
 	if (!current_char)
 	{
-		throw std::invalid_argument("There there are opening, but no closing brackets in input");
+		throw std::runtime_error("There are opening quotes at pos: " + std::to_string(pos) + "but they are not closed anywhere");
 	}
 
 	advance(); //skip closing quotes
@@ -123,9 +123,9 @@ Token Lexer::get_next_token()
 		try {
 			return string_token();
 		}
-		catch (std::invalid_argument)
+		catch (std::runtime_error &re)
 		{
-			return Token{ TokenType::OTHER };
+			return Token{ TokenType::OTHER, -1, -1, re.what()};
 		}
 	}
 
@@ -265,7 +265,7 @@ Token Lexer::get_next_token()
 		return Token{ TokenType::SUM };
 	}
 
-	return Token{ TokenType::OTHER };
+	return Token{ TokenType::OTHER, -1, -1, "Unknown symbol \"" + std::string(1,current_char) + " at pos: " + std::to_string(pos) + ".\n"};
 }
 
 Lexer::Lexer(const std::string& input) : text(input), pos(0)
@@ -290,7 +290,7 @@ void Lexer::tokenize_input(std::vector<Token>& tokenized)
 			tokenized.clear();
 			Token error_token;
 			error_token.tag = TokenType::ERROR;
-			error_token.string_v = text;
+			error_token.string_v = "error: " + curr_token.string_v + " input: " + text;
 			tokenized.push_back(error_token);
 			break;
 		}

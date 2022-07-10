@@ -18,13 +18,17 @@ private:
 	int pos;
 	Token current_token;
 
-	//in the real parser we wont be needing the check
-	bool eat(Type input_type)
+	//checks if token is of the proper type, then consumes it and updates current_token
+	bool eat(TokenType input_type)
 	{
 		if (current_token.tag == input_type)
 		{
 			if (pos < t_input.size() - 1)
-				current_token = t_input[++pos];
+			{
+				++pos;
+				current_token = t_input[pos];
+			}
+				
 			return true;
 		}
 		else

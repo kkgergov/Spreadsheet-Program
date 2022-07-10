@@ -19,7 +19,7 @@ int main()
     //Lexer l1("((R[R2C1]C[-7] + 8) < 3) && R4C5 + 0.112 + 48+sum[sum[1:1][1:1]:2][2:3]  ");
     //Lexer l2("IF((0 && 4), 3 || 2, 5+4)");
     //Lexer l2("+(-8)-count4+sum(countsumcoun");
-    Lexer l3("256.+ 256 + \"lainovoz\"\"\" + 50");
+    Lexer l3("256.+ 256 + \"lainovoz\"\"\" + 50  \" ");
     std::vector<Token> v;
     l3.tokenize_input(v);
 
