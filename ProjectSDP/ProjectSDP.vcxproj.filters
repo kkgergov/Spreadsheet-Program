@@ -42,6 +42,9 @@
     <ClCompile Include="Lexer.cpp">
       <Filter>Source Files\Lexer</Filter>
     </ClCompile>
+    <ClCompile Include="SyntaxAnalyzer.cpp">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ProjectTable.h">
@@ -64,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="AST.h">
       <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="SyntaxAnalyzer.h">
+      <Filter>Header Files\Parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

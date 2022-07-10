@@ -75,7 +75,7 @@ Token Lexer::string_token()
 	//we have reached end of input because we didnt encounter closing quotes
 	if (!current_char)
 	{
-		throw std::runtime_error("There are opening quotes at pos: " + std::to_string(pos) + "but they are not closed anywhere");
+		throw std::runtime_error("There are opening quotes at pos: " + std::to_string(pos) + " but they are not closed anywhere");
 	}
 
 	advance(); //skip closing quotes
@@ -290,7 +290,7 @@ void Lexer::tokenize_input(std::vector<Token>& tokenized)
 			tokenized.clear();
 			Token error_token;
 			error_token.tag = TokenType::ERROR;
-			error_token.string_v = "error: " + curr_token.string_v + " input: " + text;
+			error_token.string_v = ">LEXER error: " + curr_token.string_v + " input: " + text;
 			tokenized.push_back(error_token);
 			break;
 		}
