@@ -3,6 +3,8 @@
 #include "TokenType.h"
 #include "Token.h"
 
+#include "AST_Nodes.h"
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -18,61 +20,62 @@ private:
 	int pos;
 	Token current_token;
 
-	void eat(Type t)
+	void eat(TokenType t)
 	{
 		if (pos < t_input.size() - 1)
-			current_token = t_input[++pos];
+		{
+			++pos;
+			current_token = t_input[pos];
+		}
 	}
 
 	//we create the actual tree from here
 	AST_Node* cell()
 	{
-		AST_Node* tree;
+		if (current_token.tag == TokenType::END)
+		{
+			eat(TokenType::END);
 
-		if (current_token.tag == Type::END)
-		{
-			tree = nullptr;
-			eat(Type::END);
-		}
-		else if (current_token.tag == Type::STRING)
-		{
-			tree = new String(current_token.string_v);
-			eat(Type::STRING);
-			eat(Type::END);
+			return nullptr;
 		}
 		else
 		{
-			tree = COND_expr();
-			eat(Type::END);
-		}
+			AST_Node *result = COND_expr();
+			eat(TokenType::END);
 
-		return tree;
+			return result;
+		}
 	}
 
 	AST_Node* COND_expr()
 	{
-		AST_Node* expr = OR_expr();
-
-		//if this is actually the conditional expression for IF function
-		if (current_token.tag == Type::IF)
+		if (current_token.tag == TokenType::IF)
 		{
-			eat(Type::IF);
-			AST_Node* then_expr = OR_expr();
-			eat(Type::COLON);
-			AST_Node* else_expr = OR_expr();
-			return new Conditional_Operator(expr, then_expr, else_expr);
-		}
 
-		return expr;
+			eat(TokenType::IF);
+			eat(TokenType::LPAREN);
+			AST_Node *Cond = OR_expr(); //condition
+			eat(TokenType::COMMA);
+			AST_Node *Then = OR_expr(); //then
+			eat(TokenType::COMMA);
+			AST_Node *Else = OR_expr(); //else
+			eat(TokenType::RPAREN);
+
+			return new Conditional_Operator(Cond, Then, Else);
+		}
+		else
+		{
+			return OR_expr();
+		}
 	}
 
 	AST_Node* OR_expr()
 	{
 		AST_Node* result = AND_expr();
-		if (current_token.tag == Type::OR)
+		if (current_token.tag == TokenType::OR)
 		{
-			eat(Type::OR);
-			result = new Binary_Operator(Type::OR, result, OR_expr());
+			eat(TokenType::OR);
+			result = new Binary_Operator(TokenType::OR, result, OR_expr());
 		}
 
 		return result;
@@ -81,10 +84,10 @@ private:
 	AST_Node* AND_expr()
 	{
 		AST_Node* result = NOT_expr();
-		if (current_token.tag == Type::AND)
+		if (current_token.tag == TokenType::AND)
 		{
-			eat(Type::AND);
-			result = new Binary_Operator(Type::AND, result, AND_expr());
+			eat(TokenType::AND);
+			result = new Binary_Operator(TokenType::AND, result, AND_expr());
 		}
 
 		return result;
@@ -93,10 +96,10 @@ private:
 	AST_Node* NOT_expr()
 	{
 
-		if (current_token.tag == Type::NOT)
+		if (current_token.tag == TokenType::NOT)
 		{
-			eat(Type::NOT);
-			return new Unary_Operator(Type::NOT, COMP_expr());
+			eat(TokenType::NOT);
+			return new Unary_Operator(TokenType::NOT, COMP_expr());
 		}
 
 		return COMP_expr();
@@ -108,21 +111,21 @@ private:
 
 		switch (current_token.tag)
 		{
-		case Type::EQ:
-			eat(Type::EQ);
-			expr = new Binary_Operator(Type::EQ, expr, COMP_expr());
+		case TokenType::EQ:
+			eat(TokenType::EQ);
+			expr = new Binary_Operator(TokenType::EQ, expr, COMP_expr());
 			break;
-		case Type::NEQ:
-			eat(Type::NEQ);
-			expr = new Binary_Operator(Type::NEQ, expr, COMP_expr());
+		case TokenType::NEQ:
+			eat(TokenType::NEQ);
+			expr = new Binary_Operator(TokenType::NEQ, expr, COMP_expr());
 			break;
-		case Type::LESS:
-			eat(Type::LESS);
-			expr = new Binary_Operator(Type::LESS, expr, COMP_expr());
+		case TokenType::LESS:
+			eat(TokenType::LESS);
+			expr = new Binary_Operator(TokenType::LESS, expr, COMP_expr());
 			break;
-		case Type::MORE:
-			eat(Type::MORE);
-			expr = new Binary_Operator(Type::MORE, expr, COMP_expr());
+		case TokenType::MORE:
+			eat(TokenType::MORE);
+			expr = new Binary_Operator(TokenType::MORE, expr, COMP_expr());
 			break;
 		default:
 			break;
@@ -137,13 +140,13 @@ private:
 
 		switch (current_token.tag)
 		{
-		case Type::PLUS:
-			eat(Type::PLUS);
-			expr = new Binary_Operator(Type::PLUS, expr, ADD_expr());
+		case TokenType::PLUS:
+			eat(TokenType::PLUS);
+			expr = new Binary_Operator(TokenType::PLUS, expr, ADD_expr());
 			break;
-		case Type::MINUS:
-			eat(Type::MINUS);
-			expr = new Binary_Operator(Type::MINUS, expr, ADD_expr());
+		case TokenType::MINUS:
+			eat(TokenType::MINUS);
+			expr = new Binary_Operator(TokenType::MINUS, expr, ADD_expr());
 			break;
 		default:
 			break;
@@ -158,13 +161,13 @@ private:
 
 		switch (current_token.tag)
 		{
-		case Type::MUL:
-			eat(Type::MUL);
-			expr = new Binary_Operator(Type::MUL, expr, MULT_expr());
+		case TokenType::MUL:
+			eat(TokenType::MUL);
+			expr = new Binary_Operator(TokenType::MUL, expr, MULT_expr());
 			break;
-		case Type::DIV:
-			eat(Type::DIV);
-			expr = new Binary_Operator(Type::DIV, expr, MULT_expr());
+		case TokenType::DIV:
+			eat(TokenType::DIV);
+			expr = new Binary_Operator(TokenType::DIV, expr, MULT_expr());
 			break;
 		default:
 			break;
@@ -180,13 +183,13 @@ private:
 
 		switch (current_token.tag)
 		{
-		case Type::PLUS:
-			eat(Type::PLUS);
-			expr = new Unary_Operator(Type::PLUS, Value());
+		case TokenType::PLUS:
+			eat(TokenType::PLUS);
+			expr = new Unary_Operator(TokenType::PLUS, Value());
 			break;
-		case Type::MINUS:
-			eat(Type::MINUS);
-			expr = new Unary_Operator(Type::MINUS, Value());
+		case TokenType::MINUS:
+			eat(TokenType::MINUS);
+			expr = new Unary_Operator(TokenType::MINUS, Value());
 			break;
 		default:
 			expr = Value();
@@ -203,30 +206,30 @@ private:
 		switch (current_token.tag)
 		{
 
-		case Type::LPAREN:
-			eat(Type::LPAREN);
+		case TokenType::LPAREN:
+			eat(TokenType::LPAREN);
 			result = COND_expr();
-			eat(Type::RPAREN);
+			eat(TokenType::RPAREN);
 			break;
-		case Type::X_AXIS:
+		case TokenType::X_AXIS:
 		{
 			AST_Node* x, * y;
 
-			eat(Type::X_AXIS);
-			if (current_token.tag == Type::SQ_LPAREN)
+			eat(TokenType::X_AXIS);
+			if (current_token.tag == TokenType::SQ_LPAREN)
 			{
-				eat(Type::SQ_LPAREN);
+				eat(TokenType::SQ_LPAREN);
 				x = COND_expr();
-				eat(Type::SQ_RPAREN);
-				eat(Type::Y_AXIS);
-				eat(Type::SQ_LPAREN);
+				eat(TokenType::SQ_RPAREN);
+				eat(TokenType::Y_AXIS);
+				eat(TokenType::SQ_LPAREN);
 				y = COND_expr();
-				eat(Type::SQ_RPAREN);
+				eat(TokenType::SQ_RPAREN);
 			}
 			else
 			{
 				x = COND_expr();
-				eat(Type::Y_AXIS);
+				eat(TokenType::Y_AXIS);
 				y = COND_expr();
 			}
 
@@ -234,51 +237,58 @@ private:
 
 			break;
 		}
-		case Type::SUM:
+		case TokenType::SUM:
 		{
 			AST_Node* x1, * x2, * y1, * y2;
 
-			eat(Type::SUM);
-			eat(Type::SQ_LPAREN);
-			x1 = COND_expr();
-			eat(Type::COLON);
-			x2 = COND_expr();
-			eat(Type::SQ_RPAREN);
-			eat(Type::SQ_LPAREN);
-			y1 = COND_expr();
-			eat(Type::COLON);
-			y2 = COND_expr();
-			eat(Type::SQ_RPAREN);
+			eat(TokenType::SUM);
 
-			result = new Table_Func(Type::SUM, x1, x2, y1, y2);
+			eat(TokenType::SQ_LPAREN);
+			x1 = COND_expr();
+			eat(TokenType::COLON);
+			x2 = COND_expr();
+			eat(TokenType::SQ_RPAREN);
+
+			eat(TokenType::SQ_LPAREN);
+			y1 = COND_expr();
+			eat(TokenType::COLON);
+			y2 = COND_expr();
+			eat(TokenType::SQ_RPAREN);
+
+			result = new Table_Func(TokenType::SUM, x1, x2, y1, y2);
 			break;
 		}
-		case Type::COUNT:
+		case TokenType::COUNT:
 		{
 			AST_Node* x1, * x2, * y1, * y2;
 
-			eat(Type::COUNT);
-			eat(Type::SQ_LPAREN);
-			x1 = COND_expr();
-			eat(Type::COLON);
-			x2 = COND_expr();
-			eat(Type::SQ_RPAREN);
-			eat(Type::SQ_LPAREN);
-			y1 = COND_expr();
-			eat(Type::COLON);
-			y2 = COND_expr();
-			eat(Type::SQ_RPAREN);
+			eat(TokenType::COUNT);
 
-			result = new Table_Func(Type::COUNT, x1, x2, y1, y2);
+			eat(TokenType::SQ_LPAREN);
+			x1 = COND_expr();
+			eat(TokenType::COLON);
+			x2 = COND_expr();
+			eat(TokenType::SQ_RPAREN);
+			eat(TokenType::SQ_LPAREN);
+			y1 = COND_expr();
+			eat(TokenType::COLON);
+			y2 = COND_expr();
+			eat(TokenType::SQ_RPAREN);
+
+			result = new Table_Func(TokenType::COUNT, x1, x2, y1, y2);
 			break;
 		}
-		case Type::FLOAT:
+		case TokenType::FLOAT:
 			result = new Float(current_token.float_v);
-			eat(Type::FLOAT);
+			eat(TokenType::FLOAT);
 			break;
-		case Type::INT:
+		case TokenType::INT:
 			result = new Integer(current_token.int_v);
-			eat(Type::INT);
+			eat(TokenType::INT);
+			break;
+		case TokenType::STRING:
+			result = new String(current_token.string_v);
+			eat(TokenType::STRING);
 			break;
 		default:
 			throw std::invalid_argument("if the analyzer did it's job you shouldnt be able to reach here");
@@ -289,22 +299,8 @@ private:
 	}
 
 public:
-	Parser(const string& s_input) : pos(0)
+	Parser(const std::vector<Token>& v) : pos(0), t_input(v)
 	{
-		Lexer(s_input).tokenize_input(t_input);
-
-		//if the input doesnt follow the syntax, we simply create text node
-		if (!SyntaxAnalyzer(t_input).correct())
-		{
-			t_input.clear();
-			Token text_token;
-			text_token.tag = Type::STRING;
-			text_token.string_v = s_input;
-
-			t_input.push_back(text_token);
-			t_input.push_back(Token{ Type::END });
-		}
-
 		current_token = t_input[pos];
 	}
 
