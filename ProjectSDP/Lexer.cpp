@@ -289,7 +289,7 @@ void Lexer::tokenize_input(std::vector<Token>& tokenized)
 
 			tokenized.clear();
 
-			throw std::runtime_error(">LEXER error: " + curr_token.string_v + " input: " + text);
+			throw std::runtime_error(">LEXER\nerror:" + curr_token.string_v + "\ninput: " + text);
 			break;
 		}
 

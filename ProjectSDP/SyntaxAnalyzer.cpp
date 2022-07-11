@@ -262,8 +262,8 @@ void SyntaxAnalyzer::Value()
 		break;
 	default:
 		throw std::runtime_error(
-			">PARSER error: At token index(" + std::to_string(pos) + ") expected type: " +
-			"integer, string, float, sum, count, x_axis or lparen, " +
+			">PARSER \nerror: At token index(" + std::to_string(pos) + 
+			")\nexpected function, var, val or parenthized expression\n" +
 			"but got type(" +
 			current_token.toString() +
 			") instead"
