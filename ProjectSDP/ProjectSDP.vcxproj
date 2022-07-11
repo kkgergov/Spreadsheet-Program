@@ -139,19 +139,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AST_Printer.cpp" />
     <ClCompile Include="Lexer.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ProjectSDP.cpp" />
     <ClCompile Include="SyntaxAnalyzer.cpp" />
+    <ClCompile Include="Visitor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AST_Printer.h" />
     <ClInclude Include="AST.h" />
     <ClInclude Include="AST_Nodes.h" />
     <ClInclude Include="Lexer.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="ProjectTable.h" />
     <ClInclude Include="SyntaxAnalyzer.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="TokenType.h" />
-    <ClInclude Include="Visitor_Base.h" />
+    <ClInclude Include="Visitor.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="test1.txt" />

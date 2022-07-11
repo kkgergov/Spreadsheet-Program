@@ -34,6 +34,9 @@
     <Filter Include="Source Files\Parser">
       <UniqueIdentifier>{3be1ab9f-2a8a-41c8-9c89-79baf1fb7d2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interperter">
+      <UniqueIdentifier>{92213c7a-92c3-40c5-af23-5c35568df2d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProjectSDP.cpp">
@@ -45,12 +48,21 @@
     <ClCompile Include="SyntaxAnalyzer.cpp">
       <Filter>Source Files\Parser</Filter>
     </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Source Files\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="AST_Printer.cpp">
+      <Filter>Source Files\Interperter</Filter>
+    </ClCompile>
+    <ClCompile Include="Visitor.cpp">
+      <Filter>Source Files\Interperter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ProjectTable.h">
       <Filter>Header Files\Table Interpreter</Filter>
     </ClInclude>
-    <ClInclude Include="Visitor_Base.h">
+    <ClInclude Include="Visitor.h">
       <Filter>Header Files\Interpreter</Filter>
     </ClInclude>
     <ClInclude Include="TokenType.h">
@@ -70,6 +82,12 @@
     </ClInclude>
     <ClInclude Include="SyntaxAnalyzer.h">
       <Filter>Header Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Header Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="AST_Printer.h">
+      <Filter>Header Files\Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
