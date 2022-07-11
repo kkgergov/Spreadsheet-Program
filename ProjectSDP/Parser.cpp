@@ -234,7 +234,7 @@ AST_Node* Parser::Value()
 		y2 = COND_expr();
 		eat(TokenType::SQ_RPAREN);
 
-		result = new Table_Func(TokenType::SUM, x1, x2, y1, y2);
+		result = new Table_Func(TokenType::SUM, x1, y1, x2, y2);
 		break;
 	}
 	case TokenType::COUNT:

@@ -4,6 +4,8 @@
 #include <iostream>
 #include "Lexer.h"
 #include "SyntaxAnalyzer.h"
+#include "Parser.h"
+#include "AST_Printer.h"
 
 void printTokens(const std::vector<Token>& v)
 {
@@ -20,7 +22,7 @@ int main()
     //Lexer l1("((R[R2C1]C[-7] + 8) < 3) && R4C5 + 0.112 + 48+sum[sum[1:11][1:1]:2][2:3]  ");
     //Lexer l2("IF((0 && 4), 3 || 2, 5+4)");
     //Lexer l2("+(-8)-count4+sum(countsumcoun");
-    Lexer l3("IF(5>4, \"true\" + 8 - , \"false\" )");
+    Lexer l3("IF(5>4, \"true\" + 8 , \"false\" )");
     //Lexer l3("\"karakonjul\"");
     std::vector<Token> v;
 
@@ -48,8 +50,8 @@ int main()
     
 
 
-    /*AST_Node* test = Parser("(69 > 96) ? 123*0.03457  :: 4/127.789").parse();
-    PrintNodes().print(test);*/
+    AST_Node* test = Parser(v).parse();
+    AST_Printer().print(test);
 
     /*
     COO_SparseMatrix a("test1.txt");

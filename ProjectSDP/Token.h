@@ -6,7 +6,7 @@
 
 struct Token
 {
-	TokenType tag;
+	TokenType tag = TokenType::OTHER;
 
 	int int_v = 0;
 	float float_v = 0.;
