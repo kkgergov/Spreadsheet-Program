@@ -123,9 +123,9 @@ Token Lexer::get_next_token()
 		try {
 			return string_token();
 		}
-		catch (std::runtime_error &re)
+		catch (std::runtime_error& re)
 		{
-			return Token{ TokenType::OTHER, -1, -1, re.what()};
+			return Token{ TokenType::OTHER, -1, -1, re.what() };
 		}
 	}
 
@@ -265,7 +265,7 @@ Token Lexer::get_next_token()
 		return Token{ TokenType::SUM };
 	}
 
-	return Token{ TokenType::OTHER, -1, -1, "Unknown symbol \"" + std::string(1,current_char) + " at pos: " + std::to_string(pos) + ".\n"};
+	return Token{ TokenType::OTHER, -1, -1, "Unknown symbol \"" + std::string(1,current_char) + " at pos: " + std::to_string(pos) + ".\n" };
 }
 
 Lexer::Lexer(const std::string& input) : text(input), pos(0)
@@ -275,7 +275,7 @@ Lexer::Lexer(const std::string& input) : text(input), pos(0)
 
 
 //if we encounter ANYTHING that is not a building block of our program, we automatically
-//return only 1 text token of type ERROR, that contains the whole text 
+//or no closing quotation we throw
 void Lexer::tokenize_input(std::vector<Token>& tokenized)
 {
 	Token curr_token = get_next_token();
@@ -288,10 +288,8 @@ void Lexer::tokenize_input(std::vector<Token>& tokenized)
 			//std::cout << "unknown command, string until now: " << text.substr(0, pos) << "\n";
 
 			tokenized.clear();
-			Token error_token;
-			error_token.tag = TokenType::ERROR;
-			error_token.string_v = ">LEXER error: " + curr_token.string_v + " input: " + text;
-			tokenized.push_back(error_token);
+
+			throw std::runtime_error(">LEXER error: " + curr_token.string_v + " input: " + text);
 			break;
 		}
 

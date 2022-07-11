@@ -33,18 +33,6 @@ void SyntaxAnalyzer::cell()
 		eat(TokenType::END);
 		return;
 	}
-	else if (current_token.tag == TokenType::STRING)
-	{
-		eat(TokenType::STRING);
-		eat(TokenType::END);
-		return;
-	}
-	else if (current_token.tag == TokenType::ERROR)
-	{
-		throw std::runtime_error(current_token.string_v);
-
-		return;
-	}
 	else
 	{
 		COND_expr();
@@ -292,15 +280,7 @@ SyntaxAnalyzer::SyntaxAnalyzer(const std::vector<Token>& v) : pos(0), t_input(v)
 
 bool SyntaxAnalyzer::correct()
 {
-	try
-	{
 		cell();
-		return true;
-	}
-	catch (std::runtime_error& re)
-	{
-		std::cout << re.what();
-		return false;
-	}
 
+		return true;
 }

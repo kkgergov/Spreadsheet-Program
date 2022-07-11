@@ -3,6 +3,8 @@
 #include "TokenType.h"
 #include "Token.h"
 
+#include "AST_Nodes.h"
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -18,10 +20,13 @@ private:
 	int pos;
 	Token current_token;
 
-	void eat(Type t)
+	void eat(TokenType t)
 	{
 		if (pos < t_input.size() - 1)
-			current_token = t_input[++pos];
+		{
+			++pos;
+			current_token = t_input[pos];
+		}
 	}
 
 	//we create the actual tree from here
@@ -32,7 +37,7 @@ private:
 		if (current_token.tag == Type::END)
 		{
 			tree = nullptr;
-			eat(Type::END);
+			eat(TokenType::END);
 		}
 		else if (current_token.tag == Type::STRING)
 		{

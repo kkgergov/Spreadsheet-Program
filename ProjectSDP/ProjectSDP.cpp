@@ -20,14 +20,32 @@ int main()
     //Lexer l1("((R[R2C1]C[-7] + 8) < 3) && R4C5 + 0.112 + 48+sum[sum[1:11][1:1]:2][2:3]  ");
     //Lexer l2("IF((0 && 4), 3 || 2, 5+4)");
     //Lexer l2("+(-8)-count4+sum(countsumcoun");
-    Lexer l3("IF(5>4, \"true\" , \"false\" )");
+    Lexer l3("IF(5>4, \"true\" + 8 - , \"false\" )");
+    //Lexer l3("\"karakonjul\"");
     std::vector<Token> v;
-    l3.tokenize_input(v);
+
+    try {
+        l3.tokenize_input(v);
+    }
+    catch (std::runtime_error& re)
+    {
+        std::cout << re.what() << "\n";
+        return 1;
+    }
 
     //printTokens(v);
 
     SyntaxAnalyzer a(v);
-    std::cout << "\n" << a.correct() << "\n";
+
+    try {
+        std::cout << "\n" << a.correct() << "\n";
+    }
+    catch (std::runtime_error& re)
+    {
+        std::cout << re.what() << "\n";
+        return 1;
+    }
+    
 
 
     /*AST_Node* test = Parser("(69 > 96) ? 123*0.03457  :: 4/127.789").parse();
