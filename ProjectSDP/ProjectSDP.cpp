@@ -6,6 +6,7 @@
 #include "SyntaxAnalyzer.h"
 #include "Parser.h"
 #include "AST_Printer.h"
+#include "COO_SparseMatrix.h"
 
 void printTokens(const std::vector<Token>& v)
 {
@@ -19,6 +20,7 @@ void printTokens(const std::vector<Token>& v)
 
 int main()
 {
+    /*
     //Lexer l1("((R[R2C1]C[-7] + 8) < 3) && R4C5 + 0.112 + 48+sum[sum[1:11][1:1]:2][2:3]  ");
     //Lexer l2("IF((0 && 4), 3 || 2, 5+4)");
     //Lexer l2("+(-8)-count4+sum(countsumcoun");
@@ -52,13 +54,21 @@ int main()
 
     AST_Node* test = Parser(v).parse();
     AST_Printer().print(test);
+    */
+
+
+    
+    COO_SparseMatrix a("test1.txt");
+    //std::cout << a.n << ", " << a.m << "\n";
+    a.export_as_csv("output.txt");
+
 
     /*
-    COO_SparseMatrix a("test1.txt");
     CellInterpreter inter(&a);
     inter.interpret(a.find(3,0));
     cout << inter.intEval();
     */
     //a.print_all_expr();
+    return 0;
 }
 
