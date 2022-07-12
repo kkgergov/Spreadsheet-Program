@@ -13,7 +13,7 @@ struct Cell
 	int y;
 	std::string formula;
 
-	Cell(int x, int y, const std::string &formula) : x(x), y(y), formula(formula) {}
+	Cell(int x, int y, const std::string& formula) : x(x), y(y), formula(formula) {}
 };
 
 struct COO_SparseMatrix
@@ -35,7 +35,7 @@ struct COO_SparseMatrix
 			//check if n and m exceed, if they do the table cannot be created
 			if (max_n > 100000 || max_m > 100000)
 			{
-				throw std::runtime_error("Number of rows or cols in the .csv exceeds the maximal allowed!");
+				throw std::runtime_error(">COO_Table\nerror: Number of rows or cols in the .csv exceeds the maximal allowed!");
 			}
 
 
@@ -67,7 +67,7 @@ struct COO_SparseMatrix
 
 			n = max_n, m = max_m;
 		}
-		else throw std::runtime_error("couldn't open file!");
+		else throw std::runtime_error(">COO_Table\n error: couldn't open file!");
 	}
 
 	void export_as_csv(const std::string& output_file)
@@ -91,7 +91,7 @@ struct COO_SparseMatrix
 						oFile << data[idx_cell_to_export].formula;
 						idx_cell_to_export++;
 
-						if (j == m-2)
+						if (j == m - 2)
 						{
 							continue;
 						}
@@ -107,17 +107,23 @@ struct COO_SparseMatrix
 		}
 		else
 		{
-			throw std::runtime_error("file doesnt exist or doesnt have write permissions");
+			throw std::runtime_error(">COO_TABLE\nerror: file doesnt exist or doesnt have write permissions");
 		}
 
 	}
 
-	//void print_expr(int index) const
-	//{
-	//    cout << "At (" << row[index] << ", " << col[index] << "): \n";
-	//    PrintNodes().print(val[index]);
-	//    cout << "\n\n\n";
-	//}
+	std::string get_expr(int i, int j) const
+	{
+		int idx = find_table_idx_in_array(i, j);
+		if (idx != -1)
+		{
+			return data[idx].formula;
+		}
+		else
+		{
+			throw std::runtime_error(">COO_TABLE\nerror: this variable does not exist in the table");
+		}
+	}
 
 	//void print_all_expr() const
 	//{
@@ -128,50 +134,30 @@ struct COO_SparseMatrix
 	void insert(int i, int j, std::string formula)
 	{
 
-		//we handle overwrites this way
 		if (validCoordinates(i, j))
 		{
 
-			for (int k = 0; k < data.size(); k++)
+			int idx = find_table_idx_in_array(i, j);
+			if (idx != -1) //if exists, just update it
 			{
-				if (data[k].x == i && data[k].y == j)
-				{
-					data[k].formula = formula;
-					return;
-				}
+				data[idx].formula = formula;
+				return;
 			}
 
-			if (i > n-1) n = i+1;
-			if (j > m-1) m = j+1;
+			if (i > n - 1) n = i + 1;
+			if (j > m - 1) m = j + 1;
 
 			data.push_back(Cell(i, j, formula));
 		}
 		else
 		{
-			throw std::invalid_argument("Coordinates outside table!");
+			throw std::invalid_argument(">COO_Table\nerror: Coordinates outside table!");
 			return;
 		}
 	}
 
-	//AST_Node* find(int i, int j)
-	//{
-	//    if (validCoordinates(i, j))
-	//    {
-	//        for (int l = 0; l < row.size(); ++l)
-	//        {
-	//            if (row[l] == i && col[l] == j) //found element with such coords
-	//            {
-	//                return val[l];
-	//            }
-	//        }
-	//        return nullptr;
-	//    }
-	//    else return nullptr;
-	//}
-
-
 private:
-	bool validCoordinates(int i, int j)
+	bool validCoordinates(int i, int j) const
 	{
 		if (i >= 100000 || j >= 100000 || i < 0 || j < 0)
 			return false;
@@ -205,6 +191,26 @@ private:
 		}
 		if (i > max_n) max_n = i;
 
+	}
+
+	int find_table_idx_in_array(int i, int j) const
+	{
+		if (validCoordinates(i, j))
+		{
+			for (int k = 0; k < data.size(); ++k)
+			{
+				if (data[k].x == i && data[k].y == j) //found element with such coords
+				{
+					return k;
+				}
+			}
+
+			return -1;
+		}
+		else
+		{
+			throw std::runtime_error(">COO_Table\nerror: given coordinates too big or negative");
+		}
 	}
 
 	//the size of the matrix

@@ -64,8 +64,8 @@ int main()
     a.insert(3, 4, "\" nigga\"");
     a.insert(5, 0, "\" nigga\"");
     a.insert(7, 0, "\" nigga\"");
-    a.insert(7, 8, "\" nigga\"");*/
-    //std::cout << a.n << ", " << a.m << "\n";
+    a.insert(7, 8, "25 + 60 +70 +80");*/
+    //std::cout << a.get_expr(7,8) << "\n";
     a.export_as_csv("output.txt");
 
 
