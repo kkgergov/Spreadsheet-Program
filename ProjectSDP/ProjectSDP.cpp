@@ -59,6 +59,12 @@ int main()
 
     
     COO_SparseMatrix a("test1.txt");
+    /*a.insert(1, 4, "\" nigga\"");
+    a.insert(2, 4, "\" nigga\"");
+    a.insert(3, 4, "\" nigga\"");
+    a.insert(5, 0, "\" nigga\"");
+    a.insert(7, 0, "\" nigga\"");
+    a.insert(7, 8, "\" nigga\"");*/
     //std::cout << a.n << ", " << a.m << "\n";
     a.export_as_csv("output.txt");
 

@@ -132,6 +132,15 @@ struct COO_SparseMatrix
 		if (validCoordinates(i, j))
 		{
 
+			for (int k = 0; k < data.size(); k++)
+			{
+				if (data[k].x == i && data[k].y == j)
+				{
+					data[k].formula = formula;
+					return;
+				}
+			}
+
 			if (i > n-1) n = i+1;
 			if (j > m-1) m = j+1;
 
