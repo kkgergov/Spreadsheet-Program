@@ -1,14 +1,10 @@
 #pragma once
 #include <fstream>
 #include <sstream>
+#include "Visitor.h"
 #include "AST.h"
+#include "COO_SparseMatrix.h"
 using namespace std;
-
-
-
-
-
-
 
 
 const float EPSILON = 0.001;
@@ -20,10 +16,10 @@ bool f_nequal(float a, float b)
 {
     return !f_equal(a, b);
 }
-//each identifier(cell coordinates) needs to be declared before it is used.
-//To be declared, means to exist somewhere in the Table (if it isn't declared, we wont interpret further)
-//An empty(not the same as missing) or pure text cell is always evaluated as 0
-//if we encounter a boolean 
+//each identifier(cell coordinates) needs to at least be declared before it is used.
+//To be declared, means to exist somewhere in the Table (even if its an empty string)
+//Strings always get evaluated with value of 0
+
 class CellInterpreter : public Visitor
 {
 private:

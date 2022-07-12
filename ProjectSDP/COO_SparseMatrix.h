@@ -125,12 +125,28 @@ struct COO_SparseMatrix
 		}
 	}
 
-	//void print_all_expr() const
-	//{
-	//    cout << "Table size is: (" << n << ", " << m << ")\n";
+	//returns the wanted region of the table as a vector of strings (expressions)
+	void get_expr_region(std::vector<std::string> &result, int xmin, int ymin, int xmax, int ymax) const
+	{
+		if (xmin < 0 || xmin >= n ||
+			ymin < 0 || ymin >= m ||
+			xmax < 0 || xmax >= n ||
+			ymax < 0 || ymax >= m)
+		{
+			throw std::runtime_error("Invalid coordinates for region");
+		}
 
-	//    for (int idx = 0; idx < row.size();++idx)print_expr(idx);
-	//}
+		for (int i = 0; i < data.size();++i)
+		{
+
+			if (data[i].x >= xmin && data[i].x <= xmax &&
+				data[i].y >= ymin && data[i].y <= ymax)
+			{
+				result.push_back(data[i].formula);
+			}
+		}
+	}
+
 	void insert(int i, int j, std::string formula)
 	{
 

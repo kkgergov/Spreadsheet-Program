@@ -68,6 +68,12 @@ int main()
     //std::cout << a.get_expr(7,8) << "\n";
     a.export_as_csv("output.txt");
 
+    std::vector<std::string> expressions;
+    a.get_expr_region(expressions, 1, 3, 7, 8);
+    for (int i = 0; i < expressions.size(); i++)
+    {
+        std::cout << expressions[i] << "\n";
+    }
 
     /*
     CellInterpreter inter(&a);
