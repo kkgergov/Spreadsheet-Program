@@ -7,7 +7,8 @@
 #include "Parser.h"
 #include "AST_Printer.h"
 #include "COO_SparseMatrix.h"
-#include "ProjectTable.h"
+#include "CellInterpreter.h"
+using namespace std;
 
 void printTokens(const std::vector<Token>& v)
 {

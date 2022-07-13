@@ -34,10 +34,11 @@ class JUMP_Node : public AST_Node
 public:
 	//coords of expression somewhere else in the table that we want to evaluate
 	//the "jump" from one tree to another happens only during the interpretation part
+	TokenType adressing_type;
 	AST_Node* X_expr, * Y_expr;
 
-	JUMP_Node(AST_Node* X_expr, AST_Node* Y_expr)
-		: X_expr(X_expr), Y_expr(Y_expr) {};
+	JUMP_Node(TokenType adressing_type, AST_Node* X_expr, AST_Node* Y_expr)
+		: adressing_type(adressing_type), X_expr(X_expr), Y_expr(Y_expr) {};
 
 	void accept(Visitor& v);
 };

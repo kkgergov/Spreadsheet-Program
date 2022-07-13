@@ -63,11 +63,14 @@
     <ClCompile Include="COO_SparseMatrix.cpp">
       <Filter>Source Files\Table</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CellInterpreter.cpp">
+      <Filter>Source Files\Interperter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ProjectTable.h">
-      <Filter>Header Files\Table</Filter>
-    </ClInclude>
     <ClInclude Include="Visitor.h">
       <Filter>Header Files\Interpreter</Filter>
     </ClInclude>
@@ -83,9 +86,6 @@
     <ClInclude Include="AST_Nodes.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
-    <ClInclude Include="AST.h">
-      <Filter>Header Files\AST</Filter>
-    </ClInclude>
     <ClInclude Include="SyntaxAnalyzer.h">
       <Filter>Header Files\Parser</Filter>
     </ClInclude>
@@ -97,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="COO_SparseMatrix.h">
       <Filter>Header Files\Table</Filter>
+    </ClInclude>
+    <ClInclude Include="CellInterpreter.h">
+      <Filter>Header Files\Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -140,21 +140,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AST_Printer.cpp" />
+    <ClCompile Include="CellInterpreter.cpp" />
     <ClCompile Include="COO_SparseMatrix.cpp" />
     <ClCompile Include="Lexer.cpp" />
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Parser.cpp" />
-    <ClCompile Include="ProjectSDP.cpp" />
+    <ClCompile Include="ProjectSDP.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SyntaxAnalyzer.cpp" />
     <ClCompile Include="Visitor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AST_Printer.h" />
-    <ClInclude Include="AST.h" />
     <ClInclude Include="AST_Nodes.h" />
+    <ClInclude Include="CellInterpreter.h" />
     <ClInclude Include="COO_SparseMatrix.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="Parser.h" />
-    <ClInclude Include="ProjectTable.h" />
     <ClInclude Include="SyntaxAnalyzer.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="TokenType.h" />

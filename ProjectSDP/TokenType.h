@@ -33,6 +33,10 @@ enum class TokenType
 	X_AXIS,
 	Y_AXIS,
 
+	//adressing type for the variables
+	ABSOLUTE,
+	RELATIVE,
+
 	//if statement
 	IF,
 	COMMA,

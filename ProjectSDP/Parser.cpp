@@ -192,11 +192,15 @@ AST_Node* Parser::Value()
 		break;
 	case TokenType::X_AXIS:
 	{
+		TokenType adressing_type = TokenType::OTHER;
 		AST_Node* x, * y;
 
 		eat(TokenType::X_AXIS);
 		if (current_token.tag == TokenType::SQ_LPAREN)
 		{
+			//we encountered brackets, thus the adressing type of the variable must be relative
+			adressing_type = TokenType::RELATIVE;
+
 			eat(TokenType::SQ_LPAREN);
 			x = COND_expr();
 			eat(TokenType::SQ_RPAREN);
@@ -207,12 +211,15 @@ AST_Node* Parser::Value()
 		}
 		else
 		{
+			//no brackets, so absolute adressation
+			adressing_type = TokenType::ABSOLUTE;
+
 			x = COND_expr();
 			eat(TokenType::Y_AXIS);
 			y = COND_expr();
 		}
 
-		result = new JUMP_Node(x, y);
+		result = new JUMP_Node(adressing_type, x, y);
 
 		break;
 	}

@@ -1,6 +1,6 @@
 #include "COO_SparseMatrix.h"
 
-COO_SparseMatrix::COO_SparseMatrix(int rows = 0, int columns = 0) : n(rows), m(columns) {}
+COO_SparseMatrix::COO_SparseMatrix(int rows, int columns) : n(rows), m(columns) {}
 
 COO_SparseMatrix::COO_SparseMatrix(const std::string& input_file)
 {
