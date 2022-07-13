@@ -167,7 +167,7 @@ struct COO_SparseMatrix
 		}
 		else
 		{
-			throw std::invalid_argument(">COO_Table\nerror: Coordinates outside table!");
+			throw std::runtime_error(">COO_Table\nerror: Coordinates outside table!");
 			return;
 		}
 	}
