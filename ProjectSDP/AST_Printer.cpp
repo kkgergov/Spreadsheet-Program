@@ -11,7 +11,7 @@ void AST_Printer::visit(ROOT_Node* ast)
 void AST_Printer::visit(JUMP_Node* ast)
 {
 	for (int i = 0; i < tabs; ++i) std::cout << "\t";
-	std::cout << "j_node\n";
+	std::cout << "j_node" << Token{ ast->adressing_type }.toString() << "\n";
 	++tabs;
 	ast->X_expr->accept(*this);
 	ast->Y_expr->accept(*this);

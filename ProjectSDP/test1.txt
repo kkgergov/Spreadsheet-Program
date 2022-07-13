@@ -1,5 +1,5 @@
-"pibba just got chained"+4;;;;;;;;IF(5>4 && 0, "true" + 8 , "false" +1+ R5C5 * (0 || 1))
-;;;; " nigga" ;;;;
+"pibba just got chained"+4;;;;;;;;IF(5>4 && 0, "true" + 8 , "false" +1+ R5C3 * (0 || 1))
+;count[0:8][0:7];;; " nigga" ;;;;
 ;;;; " nigga" ;;;;
 ;;;; " nigga" ;;;;
 ;;;;;;;;

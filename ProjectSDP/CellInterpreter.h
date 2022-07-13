@@ -22,6 +22,8 @@ private:
     float current_value;
     int curr_x, curr_y;
 
+    bool sum_iscalled;
+
     virtual void visit(ROOT_Node* ast);
 
     virtual void visit(JUMP_Node* ast);

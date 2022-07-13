@@ -54,7 +54,7 @@ public:
 	Table_Func(
 		TokenType type,
 		AST_Node* XMIN_expr, AST_Node* YMIN_expr,
-		AST_Node* XMAX_expr, AST_Node* yMAX_expr)
+		AST_Node* XMAX_expr, AST_Node* YMAX_expr)
 		: type(type), XMIN_expr(XMIN_expr), YMIN_expr(YMIN_expr), XMAX_expr(XMAX_expr), YMAX_expr(YMAX_expr) {};
 
 	void accept(Visitor& v);

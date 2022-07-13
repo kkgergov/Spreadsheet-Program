@@ -93,6 +93,12 @@ struct Token
 		case TokenType::COUNT:
 			result = "count";
 			break;
+		case TokenType::ABSOLUTE:
+			result = "_absolute";
+			break;
+		case TokenType::RELATIVE:
+			result = "_relative";
+			break;
 		case TokenType::OTHER:
 			result = "other";
 			break;

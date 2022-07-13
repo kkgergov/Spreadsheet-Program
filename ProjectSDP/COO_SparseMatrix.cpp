@@ -34,7 +34,7 @@ COO_SparseMatrix::COO_SparseMatrix(const std::string& input_file)
 			while (std::getline(ss, word, ';'))
 			{
 				if (word != "")
-					insert(i, j, word);
+					insert(j, i, word);
 
 				++j;
 
@@ -109,12 +109,12 @@ std::string COO_SparseMatrix::get_expr(int i, int j) const
 
 void COO_SparseMatrix::get_expr_region(std::vector<std::string>& result, int xmin, int ymin, int xmax, int ymax) const
 {
-	if (xmin < 0 || xmin >= n ||
-		ymin < 0 || ymin >= m ||
-		xmax < 0 || xmax >= n ||
-		ymax < 0 || ymax >= m)
+	if (xmin < 0 || xmin >= m ||
+		ymin < 0 || ymin >= n ||
+		xmax < 0 || xmax >= m ||
+		ymax < 0 || ymax >= n)
 	{
-		throw std::runtime_error("Invalid coordinates for region");
+		throw std::runtime_error(">COO_Table\nerror: Invalid coordinates for region" + std::to_string(n) + std::to_string(m));
 	}
 
 	for (int i = 0; i < data.size();++i)
@@ -194,7 +194,7 @@ int COO_SparseMatrix::find_table_idx_in_array(int i, int j) const
 	{
 		for (int k = 0; k < data.size(); ++k)
 		{
-			if (data[k].x == i && data[k].y == j) //found element with such coords
+			if (data[k].x == j && data[k].y == i) //found element with such coords
 			{
 				return k;
 			}

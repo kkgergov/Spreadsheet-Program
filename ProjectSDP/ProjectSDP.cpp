@@ -29,7 +29,7 @@ int main()
     //Lexer l3("IF(5>4 && 0, \"true\" + 8 , \"false\" + 5 * (0 || 1) +)");
     
     
-    Lexer l3("R0C8");
+    Lexer l3("R1C1");
     std::vector<Token> v;
 
     try {

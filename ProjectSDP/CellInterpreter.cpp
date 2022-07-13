@@ -45,6 +45,7 @@ void CellInterpreter::visit(JUMP_Node* ast)
 
 		std::vector<Token> tokenized;
 		Lexer(other_cell_expr_string).tokenize_input(tokenized);
+
 		SyntaxAnalyzer(tokenized).correct();
 
 		other_cell_expr_ast = Parser(tokenized).parse();
@@ -65,12 +66,57 @@ void CellInterpreter::visit(JUMP_Node* ast)
 }
 void CellInterpreter::visit(Table_Func* ast)
 {
+	if (ast->type == TokenType::SUM && sum_iscalled) return;
+
 	int x1, x2, y1, y2;
 
-	/*ast->xMAX->accept(*this);
-	ast->xMIN->accept(*this);
-	ast->yMAX->accept(*this);
-	ast->yMIN->accept(*this);*/
+	ast->XMIN_expr->accept(*this);
+	x1 = current_value;
+	ast->YMIN_expr->accept(*this);
+	y1 = current_value;
+	ast->XMAX_expr->accept(*this);
+	x2 = current_value;
+	ast->YMAX_expr->accept(*this);
+	y2 = current_value;
+	
+	std::vector<std::string> to_sum;
+	Table->get_expr_region(to_sum, x1, y1, x2, y2);
+
+	if (ast->type == TokenType::COUNT)
+	{
+		current_value = to_sum.size();
+		return;
+	}
+
+	sum_iscalled = true;
+	int sum = 0;
+	for (const std::string& formula : to_sum)
+	{
+		AST_Node* ast_expr;
+		try
+		{
+			std::vector<Token> tokenized;
+			Lexer(formula).tokenize_input(tokenized);
+
+			SyntaxAnalyzer(tokenized).correct();
+
+			ast_expr = Parser(tokenized).parse();
+		}
+		catch (std::runtime_error& re)
+		{
+			//std::cout << re.what() << "\n";
+			throw std::runtime_error(
+				std::string(">INTERPRETER\nerror: parse cell in region\n") +
+				"formula is: " + formula + "\n" +
+				"reason: " + re.what());
+		}
+
+		ast_expr->accept(*this);
+		sum += current_value;
+	}
+	sum_iscalled = false;
+
+	current_value = sum;
 }
 
 void CellInterpreter::visit(Conditional_Operator* ast)
@@ -157,7 +203,7 @@ void CellInterpreter::visit(String* ast)
 	current_value = 0;
 }
 
-CellInterpreter::CellInterpreter(COO_SparseMatrix* table) :Table(table), current_value(0), curr_x(0), curr_y(0)
+CellInterpreter::CellInterpreter(COO_SparseMatrix* table) :Table(table), current_value(0), curr_x(0), curr_y(0), sum_iscalled(false)
 {
 }
 
