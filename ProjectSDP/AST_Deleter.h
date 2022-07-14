@@ -3,6 +3,7 @@
 
 #include "Visitor.h"
 
+//deletes nodes
 class AST_Deleter : public Visitor
 {
 
