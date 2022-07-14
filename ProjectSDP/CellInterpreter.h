@@ -7,6 +7,7 @@
 #include "Visitor.h"
 #include "SyntaxAnalyzer.h"
 #include "COO_SparseMatrix.h"
+#include "AST_Deleter.h"
 
 
 const float EPSILON = 0.001;

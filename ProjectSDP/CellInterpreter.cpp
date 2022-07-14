@@ -53,6 +53,8 @@ void CellInterpreter::visit(JUMP_Node* ast)
 	catch (std::runtime_error& re)
 	{
 		//std::cout << re.what() << "\n";
+		AST_Deleter().deleter_delete(other_cell_expr_ast);
+
 		throw std::runtime_error(
 			std::string(">INTERPRETER\nerror: cannot load cell ") +
 			"(" + std::to_string(curr_x) + ", " + std::to_string(curr_y) + ")\n" +
@@ -60,6 +62,8 @@ void CellInterpreter::visit(JUMP_Node* ast)
 	}
 
 	other_cell_expr_ast->accept(*this);
+
+	AST_Deleter().deleter_delete(other_cell_expr_ast);
 
 	curr_x = temp_x;
 	curr_y = temp_y;
@@ -92,7 +96,7 @@ void CellInterpreter::visit(Table_Func* ast)
 	int sum = 0;
 	for (const std::string& formula : to_sum)
 	{
-		AST_Node* ast_expr;
+		AST_Node* ast_expr = nullptr;
 		try
 		{
 			std::vector<Token> tokenized;
@@ -104,6 +108,7 @@ void CellInterpreter::visit(Table_Func* ast)
 		}
 		catch (std::runtime_error& re)
 		{
+			AST_Deleter().deleter_delete(ast_expr);
 			//std::cout << re.what() << "\n";
 			throw std::runtime_error(
 				std::string(">INTERPRETER\nerror: parse cell in region\n") +
@@ -113,6 +118,7 @@ void CellInterpreter::visit(Table_Func* ast)
 
 		ast_expr->accept(*this);
 		sum += current_value;
+		AST_Deleter().deleter_delete(ast_expr);
 	}
 	sum_iscalled = false;
 

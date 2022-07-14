@@ -40,7 +40,47 @@ int main()
 		std::cin >> cmd;
 		if (cmd == "SET")
 		{
+			std::cin >> arg1;
+
+			if (!table_is_loaded)
+			{
+				std::cout << "load a table first!\n";
+				continue;
+			}
+
+			int i=-1, j=-1;
+
+			std::vector<Token> adress;
+			try {
+				Lexer(arg1).tokenize_input(adress);
+			}
+			catch (std::runtime_error& re)
+			{
+				std::cout << re.what() << "\n";
+				continue;
+			}
+			catch (...)
+			{
+				std::cout << "Unknown error occured.\n";
+				return 1;
+			}
 			
+			if (adress.size() == 5 && adress[0].tag == TokenType::X_AXIS && adress[2].tag == TokenType::Y_AXIS &&
+									  adress[1].tag == TokenType::INT && adress[3].tag == TokenType::INT)
+			{
+				i = adress[1].int_v;
+				j = adress[3].int_v;
+			}
+			else
+			{
+				std::cout << "Invalid format of adress, try again\n";
+				continue;
+			}
+
+			std::cin >> arg2;
+			current_table->insert(i, j, arg2);
+			std::cout << "Succsessfuly set formula at (" << i << ", " << j << ") to " << arg2 << "\n";
+
 		}
 		else if (cmd == "PRINT")
 		{
@@ -132,6 +172,7 @@ int main()
 		{
 			std::cout << ">wrong command, try again\n";
 		}
+
 	}
 
 	return 0;

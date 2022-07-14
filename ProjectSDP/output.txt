@@ -1,8 +1,8 @@
-"pibba just got chained"+4;;;;;;;;IF(5>4 && 0, "true" + 8 , "false" +1+ R1C0 * (0 || 1))
-;;;; " nigga" ;;;;
-;;;; " nigga" ;;;;
-;;;; " nigga" ;;;;
+"pibba just got chained"+4;;;;; " nigga" ;; " nigga" 
+;count[0:8][0:7];;;;;;;
 ;;;;;;;;
- " nigga" ;;;256+89+355;;;;;
+;;;;;256+89+355;;;
+; " nigga" ; " nigga" ; " nigga" ;;;;;
+;;;;;;R1C1+3;;
 ;;;;;;;;
- " nigga" ;;;;;;;; " nigga" 
+;;;;;;;;
