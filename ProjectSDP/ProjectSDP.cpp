@@ -8,6 +8,7 @@
 #include "AST_Printer.h"
 #include "COO_SparseMatrix.h"
 #include "CellInterpreter.h"
+#include "AST_Deleter.h"
 using namespace std;
 
 void printTokens(const std::vector<Token>& v)

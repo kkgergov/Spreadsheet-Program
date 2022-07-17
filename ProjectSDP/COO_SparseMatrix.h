@@ -26,8 +26,13 @@ struct COO_SparseMatrix
 
 	std::string get_expr(int, int) const;
 
-	//returns the wanted region of the table as a vector of strings (expressions)
-	void get_expr_region(std::vector<std::string>&, int, int, int, int) const;
+	//returns the wanted region of the table as vector of coordiantes with non-empty cells
+	void get_coords_region(std::vector<std::pair<int,int>>&, int, int, int, int) const;
+
+	int get_nth_10_full_columns(std::vector<std::string>&, int);
+
+	//this time only returns the coordinates, so the interpreter can decide for itself
+	int get_nth_10_full_columns_coords(std::vector<std::pair<int,int>>&, int);
 
 	void insert(int i, int j, std::string formula);
 

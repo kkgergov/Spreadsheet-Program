@@ -7,6 +7,8 @@
 #include "Visitor.h"
 #include "SyntaxAnalyzer.h"
 #include "COO_SparseMatrix.h"
+#include "AST_Deleter.h"
+#include "AST_Printer.h"
 
 
 const float EPSILON = 0.001;
@@ -20,7 +22,7 @@ class CellInterpreter : public Visitor
 private:
     COO_SparseMatrix* Table;
     float current_value;
-    int curr_x, curr_y;
+    int curr_i, curr_j;
 
     bool sum_iscalled;
 
@@ -38,7 +40,7 @@ private:
     virtual void visit(Integer* ast);
     virtual void visit(String* ast);
 public:
-    CellInterpreter(COO_SparseMatrix* table);
+    CellInterpreter(COO_SparseMatrix* table, int, int);
 
     void interpret(AST_Node* tree);
 

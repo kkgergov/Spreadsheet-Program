@@ -69,6 +69,9 @@
     <ClCompile Include="CellInterpreter.cpp">
       <Filter>Source Files\Interperter</Filter>
     </ClCompile>
+    <ClCompile Include="AST_Deleter.cpp">
+      <Filter>Source Files\Interperter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visitor.h">
@@ -99,6 +102,9 @@
       <Filter>Header Files\Table</Filter>
     </ClInclude>
     <ClInclude Include="CellInterpreter.h">
+      <Filter>Header Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="AST_Deleter.h">
       <Filter>Header Files\Interpreter</Filter>
     </ClInclude>
   </ItemGroup>

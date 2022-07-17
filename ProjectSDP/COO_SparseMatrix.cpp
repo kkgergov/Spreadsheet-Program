@@ -34,7 +34,7 @@ COO_SparseMatrix::COO_SparseMatrix(const std::string& input_file)
 			while (std::getline(ss, word, ';'))
 			{
 				if (word != "")
-					insert(j, i, word);
+					insert(i, j, word);
 
 				++j;
 
@@ -50,13 +50,15 @@ COO_SparseMatrix::COO_SparseMatrix(const std::string& input_file)
 		n = max_n, m = max_m;
 	}
 	else throw std::runtime_error(">COO_Table\n error: couldn't open file!");
+
+	iFile.close();
 }
 
 void COO_SparseMatrix::export_as_csv(const std::string& output_file)
 {
 	//lexicoraphically sort our data for linear transformation to dense matrix in the .csv
 
-	std::sort(data.begin(), data.end(), [](Cell a, Cell b)->bool {return a.x < b.x || (a.x == b.x && a.y < b.y);});
+	std::sort(data.begin(), data.end(), [](Cell a, Cell b)->bool {return a.y < b.y || (a.y == b.y && a.x < b.x);});
 
 	std::ofstream oFile(output_file);
 
@@ -67,16 +69,12 @@ void COO_SparseMatrix::export_as_csv(const std::string& output_file)
 		{
 			for (int j = 0; j < m; j++)
 			{
-				if (idx_cell_to_export != data.size() && data[idx_cell_to_export].x == i && data[idx_cell_to_export].y == j)
+				if (idx_cell_to_export != data.size() && data[idx_cell_to_export].y == i && data[idx_cell_to_export].x == j)
 				{
 
 					oFile << data[idx_cell_to_export].formula;
 					idx_cell_to_export++;
 
-					if (j == m - 2)
-					{
-						continue;
-					}
 				}
 
 				if (j < m - 1)
@@ -92,6 +90,8 @@ void COO_SparseMatrix::export_as_csv(const std::string& output_file)
 		throw std::runtime_error(">COO_TABLE\nerror: file doesnt exist or doesnt have write permissions");
 	}
 
+
+	oFile.close();
 }
 
 std::string COO_SparseMatrix::get_expr(int i, int j) const
@@ -107,7 +107,7 @@ std::string COO_SparseMatrix::get_expr(int i, int j) const
 	}
 }
 
-void COO_SparseMatrix::get_expr_region(std::vector<std::string>& result, int xmin, int ymin, int xmax, int ymax) const
+void COO_SparseMatrix::get_coords_region(std::vector<std::pair<int,int>>& result, int xmin, int xmax, int ymin, int ymax) const
 {
 	if (xmin < 0 || xmin >= m ||
 		ymin < 0 || ymin >= n ||
@@ -123,9 +123,104 @@ void COO_SparseMatrix::get_expr_region(std::vector<std::string>& result, int xmi
 		if (data[i].x >= xmin && data[i].x <= xmax &&
 			data[i].y >= ymin && data[i].y <= ymax)
 		{
-			result.push_back(data[i].formula);
+			result.push_back({ data[i].y, data[i].x });
 		}
 	}
+}
+
+int COO_SparseMatrix::get_nth_10_full_columns(std::vector<std::string>& result, int nth)
+{
+	//first sort the pairs
+	std::sort(data.begin(), data.end(), [](Cell a, Cell b)->bool {return a.y < b.y || (a.y == b.y && a.x < b.x);});
+
+	int min = nth * 10;
+
+	if (min >= m)
+	{
+		return -1;
+	}
+
+	int max = nth * 10 + 9;
+	if (max >= m)
+	{
+		max = m - 1;
+	}
+
+	int idx_cell_to_export = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		while (idx_cell_to_export != data.size() && (data[idx_cell_to_export].x < min || data[idx_cell_to_export].x > max))
+		{
+			idx_cell_to_export++;
+		}
+
+		for (int j = min; j <= max; j++)
+		{
+			if (idx_cell_to_export != data.size() && data[idx_cell_to_export].y == i && data[idx_cell_to_export].x == j)
+			{
+
+				result.push_back(data[idx_cell_to_export].formula);
+				idx_cell_to_export++;
+			}
+
+			if (j < max)
+			{
+				result.push_back(",");
+			}
+		}
+		result.push_back("@");
+	}
+
+	return 0;
+}
+
+int COO_SparseMatrix::get_nth_10_full_columns_coords(std::vector<std::pair<int, int>>& result, int nth)
+{
+	//first sort the pairs
+	std::sort(data.begin(), data.end(), [](Cell a, Cell b)->bool {return a.y < b.y || (a.y == b.y && a.x < b.x);});
+
+	int min = nth * 10;
+
+	if (min >= m)
+	{
+		return -1;
+	}
+
+	int max = nth * 10 + 9;
+	if (max >= m)
+	{
+		max = m - 1;
+	}
+
+	int idx_cell_to_export = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		while (idx_cell_to_export != data.size() && (data[idx_cell_to_export].x < min || data[idx_cell_to_export].x > max))
+		{
+			idx_cell_to_export++;
+		}
+
+		for (int j = min; j <= max; j++)
+		{
+			if (idx_cell_to_export != data.size() && data[idx_cell_to_export].y == i && data[idx_cell_to_export].x == j)
+			{
+
+				result.push_back({ data[idx_cell_to_export].y,  data[idx_cell_to_export].x });
+				idx_cell_to_export++;
+			}
+
+			if (j < max)
+			{
+				result.push_back({ INT_MAX,INT_MAX });
+			}
+		}
+		result.push_back({ INT_MIN, INT_MIN });
+	}
+
+
+	return 0;
 }
 
 void COO_SparseMatrix::insert(int i, int j, std::string formula)
@@ -144,7 +239,7 @@ void COO_SparseMatrix::insert(int i, int j, std::string formula)
 		if (i > n - 1) n = i + 1;
 		if (j > m - 1) m = j + 1;
 
-		data.push_back(Cell(i, j, formula));
+		data.push_back(Cell(j, i, formula));
 	}
 	else
 	{
