@@ -1,5 +1,5 @@
 #include "CellInterpreter.h"
-#include <iostream>
+
 bool f_equal(float a, float b)
 {
 	return ((a - b) < EPSILON) && ((b - a) < EPSILON);
@@ -129,11 +129,9 @@ void CellInterpreter::visit(Table_Func* ast)
 				"reason: " + re.what());
 		}
 
-		std::cout << "(" << coords.first << ", " << coords.second << ")\n";
-		AST_Printer().print(ast_expr);
+
 		ast_expr->accept(*this);
 		sum += current_value;
-		std::cout << current_value << "\n";
 		AST_Deleter().deleter_delete(ast_expr);
 	}
 	sum_iscalled = false;
