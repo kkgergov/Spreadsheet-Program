@@ -29,6 +29,8 @@ struct COO_SparseMatrix
 	//returns the wanted region of the table as a vector of strings (expressions)
 	void get_expr_region(std::vector<std::string>&, int, int, int, int) const;
 
+	void get_nth_10_full_columns(std::vector<std::string>&, int);
+
 	void insert(int i, int j, std::string formula);
 
 private:

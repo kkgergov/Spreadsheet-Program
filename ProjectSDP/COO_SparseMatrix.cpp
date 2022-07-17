@@ -50,6 +50,8 @@ COO_SparseMatrix::COO_SparseMatrix(const std::string& input_file)
 		n = max_n, m = max_m;
 	}
 	else throw std::runtime_error(">COO_Table\n error: couldn't open file!");
+
+	iFile.close();
 }
 
 void COO_SparseMatrix::export_as_csv(const std::string& output_file)
@@ -92,6 +94,8 @@ void COO_SparseMatrix::export_as_csv(const std::string& output_file)
 		throw std::runtime_error(">COO_TABLE\nerror: file doesnt exist or doesnt have write permissions");
 	}
 
+
+	oFile.close();
 }
 
 std::string COO_SparseMatrix::get_expr(int i, int j) const
@@ -123,6 +127,31 @@ void COO_SparseMatrix::get_expr_region(std::vector<std::string>& result, int xmi
 		if (data[i].x >= xmin && data[i].x <= xmax &&
 			data[i].y >= ymin && data[i].y <= ymax)
 		{
+			result.push_back(data[i].formula);
+		}
+	}
+}
+
+void COO_SparseMatrix::get_nth_10_full_columns(std::vector<std::string>& result, int n)
+{
+	//first sort the pairs
+	std::sort(data.begin(), data.end(), [](Cell a, Cell b)->bool {return a.y < b.y || (a.y == b.y && a.x < b.x);});
+
+	int min = n * 3;
+	int max = n * 3 + 2;
+
+	int current_row = 0;
+	for (int i = 0; i < data.size();++i)
+	{
+		if (data[i].x >= min && data[i].x <= max)
+		{
+
+			if (data[i].y != current_row)
+			{
+				result.push_back("@");
+				current_row = data[i].y;
+			}
+
 			result.push_back(data[i].formula);
 		}
 	}
