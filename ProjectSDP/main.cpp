@@ -6,6 +6,8 @@
 #include "SyntaxAnalyzer.h"
 #include "Parser.h"
 #include "COO_SparseMatrix.h"
+#include "AST_Deleter.h"
+#include "CellInterpreter.h"
 
 void printTokens(const std::vector<Token>& v)
 {
@@ -97,7 +99,12 @@ int main()
 		std::getline(std::cin, input_line);
 		std::vector<std::string> command = exctract_words_from_string(input_line);
 
-		if (command[0] == "SET" && command.size() == 3)
+		if (command.size() == 0)
+		{
+			continue;
+		}
+
+		if (command[0] == "SET" && command.size() >= 3)
 		{
 			if (!table_is_loaded)
 			{
@@ -113,8 +120,15 @@ int main()
 				continue;
 			}
 
-			current_table->insert(i, j, command[2]);
-			std::cout << "Succsessfuly set formula at (" << i << ", " << j << ") to " << command[2] << "\n";
+			std::string formula = "";
+			//std::cout << command.size();
+			for (int i = 2; i < command.size(); i++)
+			{
+				formula += command[i];
+			}
+
+			current_table->insert(i, j, formula);
+			std::cout << "Succsessfuly set formula at (" << i << ", " << j << ") to " << formula << "\n";
 
 		}
 		else if (command[0] == "PRINT" && command.size() == 3)
@@ -129,23 +143,151 @@ int main()
 			{
 				if (command[2] == "ALL")
 				{
-					std::vector<std::string> res;
-					current_table->get_nth_10_full_columns(res, 0);
-					for (const std::string& a : res)
-					{
-						if (a == "@") std::cout << "\n";
-						else
-						{
-							std::cout << a << "\t";
-						}
-					}
-					std::cout << "\n";
 
+					std::vector<std::string> res;
+					int n = 0;
+					while (current_table->get_nth_10_full_columns(res, n) != -1)
+					{
+
+						for (const std::string& a : res)
+						{
+							if (a == "@") std::cout << "\n";
+							else if (a == ",")  std::cout << "|";
+							else
+							{
+								std::cout << a;
+							}
+						}
+						std::cout << "\n\n-----------------------------------------------\n\n";
+
+						res.clear();
+						n++;
+					}
+
+				}
+				else
+				{
+					int i = -1, j = -1;
+
+					if (!verify_and_get_adress(command[2], i, j))
+					{
+						std::cout << "Invalid format of adress, try again\n";
+						continue;
+					}
+
+					try
+					{
+						std::cout << current_table->get_expr(i, j) << "\n";
+					}
+					catch (std::runtime_error& re)
+					{
+						std::cout << re.what();
+					}
+					catch (...)
+					{
+						std::cout << "Unknown error occured.\n";
+						return 1;
+					}
 				}
 			}
 			else if (command[1] == "VAL")
 			{
+				if (command[2] == "ALL")
+				{
 
+					std::vector<std::pair<int,int>> res;
+					int n = 0;
+					while (current_table->get_nth_10_full_columns_coords(res, n) != -1)
+					{
+
+						for (const std::pair<int,int>& a : res)
+						{
+							if (a.first == INT_MIN) std::cout << "\n";
+							else if (a.first == INT_MAX)  std::cout << "|";
+							else
+							{
+								//std::cout << "(" << a.first << ", " << a.second << ")";
+								AST_Node* jump_tree = nullptr; //we create a tree with ROOT node and JUMP node and interpret it
+								try
+								{
+									std::string coords_to_visit = "R" + std::to_string(a.first) + "C" + std::to_string(a.second);
+
+									std::vector<Token> tokenized;
+									Lexer(coords_to_visit).tokenize_input(tokenized);
+
+									SyntaxAnalyzer(tokenized).correct();
+
+									jump_tree = Parser(tokenized).parse();
+									
+									CellInterpreter inter(current_table, a.first, a.second);
+									inter.interpret(jump_tree);
+
+									std::cout << inter.eval();
+								}
+								catch (std::runtime_error& re)
+								{
+									//std::cout << re.what() << "\n";
+									AST_Deleter().deleter_delete(jump_tree);
+
+									std::cout << re.what();
+
+									continue;
+								}
+								catch (...)
+								{
+									std::cout << "Unknown error occured.\n";
+									return 1;
+								}
+
+								AST_Deleter().deleter_delete(jump_tree);
+							}
+						}
+						std::cout << "\n\n-----------------------------------------------\n\n";
+
+						res.clear();
+						n++;
+					}
+
+				}
+				else
+				{
+					int i = -1, j = -1;
+
+					if (!verify_and_get_adress(command[2], i, j))
+					{
+						std::cout << "Invalid format of adress, try again\n";
+						continue;
+					}
+
+					AST_Node* jump_tree = nullptr;
+					try
+					{
+						std::string coords_to_visit = "R" + std::to_string(i) + "C" + std::to_string(j);
+
+						std::vector<Token> tokenized;
+						Lexer(coords_to_visit).tokenize_input(tokenized);
+
+						SyntaxAnalyzer(tokenized).correct();
+
+						jump_tree = Parser(tokenized).parse();
+
+						CellInterpreter inter(current_table, i, j);
+						inter.interpret(jump_tree);
+
+						std::cout << inter.eval() << "\n";
+
+					}
+					catch (std::runtime_error& re)
+					{
+						std::cout << re.what() <<"\n";
+						AST_Deleter().deleter_delete(jump_tree);
+					}
+					catch (...)
+					{
+						std::cout << "Unknown error occured.\n";
+						return 1;
+					}
+				}
 			}
 			else
 			{

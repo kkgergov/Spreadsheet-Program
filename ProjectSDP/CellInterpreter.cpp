@@ -1,5 +1,5 @@
 #include "CellInterpreter.h"
-
+#include <iostream>
 bool f_equal(float a, float b)
 {
 	return ((a - b) < EPSILON) && ((b - a) < EPSILON);
@@ -24,24 +24,24 @@ void CellInterpreter::visit(JUMP_Node* ast)
 	ast->Y_expr->accept(*this);
 	y_crd = (int)current_value;
 
-	int temp_x = curr_x, temp_y = curr_y;
+	int temp_i = curr_i, temp_j = curr_j;
 
 	if (ast->adressing_type == TokenType::ABSOLUTE)
 	{
-		curr_x = x_crd;
-		curr_y = y_crd;
+		curr_i = x_crd;
+		curr_j = y_crd;
 	}
 	else if (ast->adressing_type == TokenType::RELATIVE)
 	{
-		curr_x += x_crd;
-		curr_y += y_crd;
+		curr_i += x_crd;
+		curr_j += y_crd;
 	}
 
 	//try to load in the other cell and interpret it
 	AST_Node* other_cell_expr_ast = nullptr;
 	try
 	{
-		std::string other_cell_expr_string = Table->get_expr(curr_x, curr_y);
+		std::string other_cell_expr_string = Table->get_expr(curr_i, curr_j);
 
 		std::vector<Token> tokenized;
 		Lexer(other_cell_expr_string).tokenize_input(tokenized);
@@ -49,6 +49,8 @@ void CellInterpreter::visit(JUMP_Node* ast)
 		SyntaxAnalyzer(tokenized).correct();
 
 		other_cell_expr_ast = Parser(tokenized).parse();
+
+		//AST_Printer().print(other_cell_expr_ast);
 	}
 	catch (std::runtime_error& re)
 	{
@@ -57,7 +59,7 @@ void CellInterpreter::visit(JUMP_Node* ast)
 
 		throw std::runtime_error(
 			std::string(">INTERPRETER\nerror: cannot load cell ") +
-			"(" + std::to_string(curr_x) + ", " + std::to_string(curr_y) + ")\n" +
+			"(" + std::to_string(curr_i) + ", " + std::to_string(curr_j) + ")\n" +
 			"reason: " + re.what());
 	}
 
@@ -65,8 +67,8 @@ void CellInterpreter::visit(JUMP_Node* ast)
 
 	AST_Deleter().deleter_delete(other_cell_expr_ast);
 
-	curr_x = temp_x;
-	curr_y = temp_y;
+	curr_i = temp_i;
+	curr_j = temp_j;
 }
 void CellInterpreter::visit(Table_Func* ast)
 {
@@ -83,8 +85,14 @@ void CellInterpreter::visit(Table_Func* ast)
 	ast->YMAX_expr->accept(*this);
 	y2 = current_value;
 	
-	std::vector<std::string> to_sum;
-	Table->get_expr_region(to_sum, x1, y1, x2, y2);
+	std::vector<std::pair<int,int>> to_sum;
+	Table->get_coords_region(to_sum, x1, x2, y1, y2);
+
+	//std::cout << "[" << x1 << ": " << x2 << "][" << y1 << ": " << y2 << "]\n";
+	///*for (const auto& a : to_sum)
+	//{
+	//	std::cout << "(" << a.first << ", " << a.second << ")\n";
+	//}*/
 
 	if (ast->type == TokenType::COUNT)
 	{
@@ -94,8 +102,13 @@ void CellInterpreter::visit(Table_Func* ast)
 
 	sum_iscalled = true;
 	int sum = 0;
-	for (const std::string& formula : to_sum)
+	int i_temp = curr_i, j_temp = curr_j;
+	for (const std::pair<int,int>& coords : to_sum)
 	{
+		std::string formula = Table->get_expr(coords.first, coords.second);
+
+		curr_i = coords.first, curr_j = coords.second;
+
 		AST_Node* ast_expr = nullptr;
 		try
 		{
@@ -116,11 +129,16 @@ void CellInterpreter::visit(Table_Func* ast)
 				"reason: " + re.what());
 		}
 
+		std::cout << "(" << coords.first << ", " << coords.second << ")\n";
+		AST_Printer().print(ast_expr);
 		ast_expr->accept(*this);
 		sum += current_value;
+		std::cout << current_value << "\n";
 		AST_Deleter().deleter_delete(ast_expr);
 	}
 	sum_iscalled = false;
+
+	curr_i = i_temp, curr_j = j_temp;
 
 	current_value = sum;
 }
@@ -209,7 +227,7 @@ void CellInterpreter::visit(String* ast)
 	current_value = 0;
 }
 
-CellInterpreter::CellInterpreter(COO_SparseMatrix* table) :Table(table), current_value(0), curr_x(0), curr_y(0), sum_iscalled(false)
+CellInterpreter::CellInterpreter(COO_SparseMatrix* table, int i = 0, int j = 0) :Table(table), current_value(0), curr_i(i), curr_j(j), sum_iscalled(false)
 {
 }
 
